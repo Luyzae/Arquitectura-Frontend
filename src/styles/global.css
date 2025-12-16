@@ -1,0 +1,37 @@
+/* global.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Material Symbols */
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+}
+
+/* Scrollbar hidden */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Evita scroll horizontal global (la barra fea de abajo) */
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Por si algún contenedor empuja el layout */
+#root,
+main {
+  overflow-x: hidden;
+}
+
+#sidebar-bottom {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}

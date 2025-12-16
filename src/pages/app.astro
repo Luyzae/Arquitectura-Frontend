@@ -1,0 +1,642 @@
+---
+import "../styles/global.css";
+---
+
+<!DOCTYPE html>
+<html class="dark" lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Soundhub - Música en streaming</title>
+
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+  </head>
+
+  <body
+    class="bg-background-light dark:bg-background-dark font-display text-stone-900 dark:text-white"
+  >
+    <div class="flex min-h-screen w-full">
+      <!-- SIDEBAR -->
+      <aside
+        class="sticky top-0 flex h-screen w-64 flex-col border-r border-white/10 bg-background-dark/80 px-6 py-8 backdrop-blur-md"
+      >
+        <div class="flex items-center gap-3 pb-8">
+          <svg fill="none" height="40" viewBox="0 0 40 40" width="40" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" fill="url(#paint0_linear_1_2)" r="20"></circle>
+            <defs>
+              <linearGradient gradientUnits="userSpaceOnUse" id="paint0_linear_1_2" x1="0" x2="40" y1="0" y2="40">
+                <stop stop-color="#E83F6F"></stop>
+                <stop offset="1" stop-color="#6D13EC"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
+          <h2 class="text-white text-3xl font-bold">Soundhub</h2>
+        </div>
+
+        <nav class="mt-12 flex flex-1 flex-col gap-4">
+          <button
+            class="nav-link flex items-center gap-4 rounded-lg px-4 py-2 text-base font-medium text-stone-300 transition-colors hover:bg-primary/20 hover:text-white"
+            data-route="home"
+            type="button"
+          >
+            <span class="material-symbols-outlined"> home </span>
+            Inicio
+          </button>
+
+          <button
+            class="nav-link flex items-center gap-4 rounded-lg px-4 py-2 text-base font-medium text-stone-300 transition-colors hover:bg-primary/20 hover:text-white"
+            data-route="search"
+            type="button"
+          >
+            <span class="material-symbols-outlined"> search </span>
+            Buscar
+          </button>
+
+          <button
+            class="nav-link flex items-center gap-4 rounded-lg px-4 py-2 text-base font-medium text-stone-300 transition-colors hover:bg-primary/20 hover:text-white"
+            data-route="library"
+            type="button"
+          >
+            <span class="material-symbols-outlined"> library_music </span>
+            Tu biblioteca
+          </button>
+        </nav>
+
+        <div id="sidebar-bottom" class="mt-auto flex flex-col gap-4 will-change-transform">
+          <button
+            class="flex items-center gap-4 rounded-lg px-4 py-2 text-base font-medium text-stone-300 transition-colors hover:bg-primary/20 hover:text-white"
+            type="button"
+            data-create-playlist-btn
+          >
+            <span class="material-symbols-outlined"> add_box </span>
+            Crear playlist
+          </button>
+
+          <button
+            class="flex items-center gap-4 rounded-lg px-4 py-2 text-base font-medium text-stone-300 transition-colors hover:bg-primary/20 hover:text-white"
+            type="button"
+          >
+            <span class="material-symbols-outlined"> favorite </span>
+            Canciones que te gustan
+          </button>
+
+          <button
+            id="logout-button"
+            class="mt-6 w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-[#a89db9] hover:text-white hover:bg-white/5 rounded-xl transition"
+          >
+            <span class="material-symbols-outlined text-xl">logout</span>
+            <span>Cerrar sesión</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <main class="flex-1 overflow-y-auto pb-28">
+        <!-- HEADER (con buscador) -->
+        <header
+          class="sticky top-0 z-10 flex h-20 items-center justify-between bg-background-dark/50 px-10 backdrop-blur-md"
+        >
+          <div class="flex-1"></div>
+
+          <div class="flex flex-1 justify-center">
+            <form id="main-search-form" class="relative w-full max-w-lg">
+              <input
+                id="main-search-input"
+                class="w-full rounded-full border-2 border-transparent bg-white/10 py-2 pl-10 pr-4 text-white placeholder-stone-400 focus:border-primary focus:bg-white/5 focus:outline-none"
+                placeholder="Busca artistas, canciones, pódcasts..."
+                type="text"
+                autocomplete="off"
+              />
+              <button
+                type="submit"
+                class="absolute inset-y-0 left-0 flex items-center pl-3"
+              >
+                <span class="material-symbols-outlined text-stone-400">
+                  search
+                </span>
+              </button>
+
+              <!-- Bandeja de sugerencias -->
+              <div
+                id="main-search-suggestions"
+                class="absolute left-0 right-0 top-full mt-2 bg-[#151517] border border-white/10 rounded-xl shadow-lg hidden z-20 overflow-hidden"
+              >
+                <!-- JS inyecta aquí las sugerencias -->
+              </div>
+            </form>
+          </div>
+
+          <div class="flex flex-1 items-center justify-end gap-4">
+            <button
+              class="rounded-lg bg-accent-pink px-4 py-2 text-sm font-bold text-white transition-transform hover:scale-105"
+            >
+              Actualizar a Premium
+            </button>
+
+            <button
+              class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-black/20 hover:ring-2 hover:ring-primary/50"
+            >
+              <img
+                alt="Perfil de usuario"
+                class="h-full w-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfEtf2TA3uaOwVHDmvBSTC6f7h5b8mW1JQwKO7mBoJh2cmY5V3QhhAWFafv3GKnwQsFtoyKYQzoCV7waHE4I8Ps8y0Z9wwfwaKErds1Y-Lebm-NyL5q8N0DOrwb19RAAG_nq1LH41fzpXv9H5G54Wm9FGeSwOkEbmEku5h-GOStqjjMPxwKa-gA_vSYlQ07dwWXntbYaChXefgcfvXKXVct10MxZ08ZB9Ux1L6Eq8U1GTKB5DllW3eTmaq9PtaMwdGKaXdglzyNxc"
+              />
+            </button>
+          </div>
+        </header>
+
+        <!-- CONTENEDOR DE VISTAS -->
+        <div class="px-4 py-8 sm:px-6 lg:px-8">
+          <!-- VISTA HOME -->
+          <section id="view-home" class="app-view">
+            <!-- HERO -->
+            <div
+              class="relative mb-12 h-[400px] w-full overflow-hidden rounded-xl"
+            >
+              <img
+                alt="Featured Release"
+                class="h-full w-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBz2C7KxEsLtnkXLSmhIugE-IB-lcQnUrqBTrZaTSK9vZL8tieI7fl-fJqJvspfbiHjTweJTWd172sDb01LTp-gT1GvHK00dFm4RgmcbP3qLtMVvsrptU2s05vDPRzDp2qQR8FW_cdMs8TlnUHkbo09defcPK3DIcMe1GIGbtDSt3jeGKQ0d2KBVpees12cG9VzOMRz1bCb1cUYvty_YzwrisYGQ0Nk6fz3xTJUi7rZYJ8JySnKtMOhCox9yGcuoBQhkzTJM-pCLrw"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-dark-purple/80 via-mid-purple/30 to-transparent"
+              ></div>
+
+              <div class="absolute bottom-0 left-0 p-10 text-white">
+                <h1 class="text-5xl font-bold">Nuevo Lanzamiento</h1>
+                <p class="mt-2 max-w-lg text-lg text-f0e5f5/90">
+                  Explora los éxitos más recientes y descubre nuevos artistas. Sumérgete en un
+                  mundo de música diseñado especialmente para ti.
+                </p>
+                <button
+                  class="mt-6 flex items-center gap-2 rounded-lg bg-accent-pink px-6 py-3 text-base font-bold text-white shadow-lg transition-transform hover:scale-105"
+                >
+                  <span class="material-symbols-outlined"> play_arrow </span>
+                  Reproducir ahora
+                </button>
+              </div>
+            </div>
+            
+            <!-- FEED DINÁMICO (inyectado por home-feed.js) -->
+            <div id="home-dynamic" class="space-y-10"></div>
+            </section>
+          <!-- VISTA BUSCAR -->
+          <section id="view-search" class="app-view hidden">
+            <div class="max-w-4xl mx-auto space-y-10">
+              <!-- Encabezado de página -->
+              <header
+                class="flex flex-wrap justify-between gap-3 border-b border-white/10 pb-4 mb-4"
+              >
+                <div class="flex min-w-72 flex-col gap-2">
+                  <h1
+                    class="text-white text-4xl font-black leading-tight tracking-[-0.033em]"
+                  >
+                    Buscar
+                  </h1>
+                  <p class="text-[#a89db9] text-base font-normal leading-normal">
+                    Encuentra tus canciones, artistas, álbumes o podcasts
+                    favoritos.
+                  </p>
+                </div>
+              </header>
+
+              <!-- Buscador -->
+              <section class="space-y-4">
+                <form
+                  id="search-form"
+                  class="flex flex-col md:flex-row items-stretch gap-4"
+                >
+                  <!-- Wrapper para input + sugerencias (mismo ancho) -->
+                  <div class="relative flex-1">
+                    <label class="flex flex-col h-14">
+                      <div
+                        class="flex w-full flex-1 items-stretch rounded-xl h-full"
+                      >
+                        <div
+                          class="text-[#a89db9] flex border-none bg-white/5 items-center justify-center pl-4 rounded-l-xl border-r-0"
+                        >
+                          <span class="material-symbols-outlined">search</span>
+                        </div>
+                        <input
+                          id="search-input"
+                          name="query"
+                          class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-xl text-white focus:outline-0 focus:ring-2 focus:ring-pink-accent border-none bg-white/5 h-full placeholder:text-[#a89db9] px-4 text-base font-normal leading-normal"
+                          placeholder="¿Qué quieres escuchar?"
+                          autocomplete="off"
+                          required
+                        />
+                      </div>
+                    </label>
+
+                    <!-- Bandeja de sugerencias ENGANCHADA al input -->
+                    <div
+                      id="suggestions-container"
+                      class="absolute left-0 right-0 top-full mt-1 space-y-1 bg-[#120c1b] border border-white/10 rounded-xl shadow-lg hidden z-20 overflow-hidden"
+                    >
+                      <!-- JS inyecta aquí las sugerencias mientras escribes -->
+                    </div>
+                  </div>
+
+                  <button
+                    id="search-button"
+                    type="submit"
+                    class="flex md:min-w-[140px] md:max-w-[240px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-6 bg-primary text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors duration-200"
+                  >
+                    <span class="truncate">Buscar</span>
+                  </button>
+                </form>
+
+                <!-- Estado de la búsqueda -->
+                <p
+                  id="search-status"
+                  class="text-sm text-[#a89db9] min-h-[1.25rem]"
+                ></p>
+              </section>
+
+              <!-- Búsquedas recientes -->
+              <section class="space-y-3">
+                <div class="flex items-center justify-between px-1">
+                  <h2
+                    class="text-white text-[20px] font-semibold leading-tight tracking-[-0.015em]"
+                  >
+                    Búsquedas recientes
+                  </h2>
+                </div>
+
+                <div
+                  id="recent-searches"
+                  class="flex flex-wrap gap-3 p-1"
+                ></div>
+              </section>
+
+              <!-- Vista de artista principal -->
+              <section id="artist-section" class="space-y-3 hidden">
+                <h2
+                  class="text-white text-[20px] font-semibold leading-tight tracking-[-0.015em] px-1"
+                >
+                  Artista principal
+                </h2>
+
+                <div
+                  id="artist-overview"
+                  class="bg-white/5 rounded-2xl p-4 flex flex-col md:flex-row gap-4 items-start"
+                >
+                  <!-- El JS inyecta el artista aquí -->
+                </div>
+              </section>
+
+              <!-- Resultados de búsqueda -->
+              <section class="space-y-3">
+                <h2
+                  class="text-white text-[20px] font-semibold leading-tight tracking-[-0.015em] px-1"
+                >
+                  Canciones
+                </h2>
+
+                <div
+                  id="results-container"
+                  class="space-y-2"
+                ></div>
+              </section>
+
+              <!-- Explorar por género -->
+              <section class="space-y-3">
+                <h2
+                  class="text-white text-[20px] font-semibold leading-tight tracking-[-0.015em] px-1"
+                >
+                  Explorar por género
+                </h2>
+
+                <div
+                  class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 p-1"
+                >
+                  <!-- Pop -->
+                  <div
+                    class="relative group aspect-square rounded-xl overflow-hidden cursor-pointer"
+                  >
+                    <div
+                      class="bg-center bg-no-repeat w-full h-full bg-cover transition-transform duration-300 group-hover:scale-110"
+                      style='background-image:url("https://images.pexels.com/photos/167636/pexels-photo-167636.jpeg?auto=compress&cs=tinysrgb&w=800");'
+                    ></div>
+                    <div
+                      class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
+                    ></div>
+                    <p
+                      class="absolute bottom-3 left-3 text-white font-semibold text-base"
+                    >
+                      Pop
+                    </p>
+                  </div>
+
+                  <!-- Aquí puedes seguir pegando más géneros si quieres -->
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <!-- VISTA BIBLIOTECA -->
+          <section id="view-library" class="app-view hidden">
+            <div class="max-w-7xl mx-auto">
+              <div class="mb-8">
+                <h1 class="text-3xl font-bold text-white mb-2">Tu biblioteca</h1>
+                <p class="text-stone-400">Todas tus playlists en un solo lugar</p>
+              </div>
+
+              <!-- Contenedor de playlists -->
+              <div data-playlists-container class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+          </section>
+
+        <!-- VISTA PLAYLIST (estilo YT Music) -->
+        <section id="view-playlist" class="app-view hidden">
+        <div class="max-w-6xl mx-auto px-2 sm:px-4">
+            <button
+            id="back-to-library"
+            class="text-sm text-accent-pink hover:underline flex items-center gap-1 mb-6"
+            >
+            <span class="material-symbols-outlined text-base">arrow_back</span>
+            Volver a biblioteca
+            </button>
+
+            <div class="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-10">
+            <!-- Columna izquierda: portada + info -->
+            <aside class="lg:sticky lg:top-28 self-start">
+                <div class="rounded-3xl overflow-hidden bg-white/5 border border-white/10">
+                <div
+                    id="playlist-cover"
+                    class="aspect-square bg-center bg-cover"
+                    style='background-image:url("https://via.placeholder.com/600x600?text=Playlist");'
+                ></div>
+
+                <div class="p-6">
+                    <h1 id="playlist-title" class="text-4xl font-black text-white leading-tight">
+                    Playlist
+                    </h1>
+
+                    <div class="mt-3 text-sm text-white/60 space-y-1">
+                    <p class="font-semibold text-white/80">Luyz</p>
+                    <p id="playlist-meta">0 pistas</p>
+                    </div>
+
+                    <div class="mt-6 flex items-center gap-3">
+                    <button
+                        id="playlist-play-all"
+                        type="button"
+                        class="h-12 w-12 rounded-full bg-white text-black grid place-items-center hover:scale-105 transition"
+                        title="Reproducir"
+                    >
+                        <span class="material-symbols-outlined text-3xl">play_arrow</span>
+                    </button>
+
+                    <button
+                        id="playlist-shuffle"
+                        type="button"
+                        class="h-12 w-12 rounded-full bg-white/10 border border-white/10 text-white grid place-items-center hover:bg-white/15 transition"
+                        title="Aleatorio"
+                    >
+                        <span class="material-symbols-outlined text-2xl">shuffle</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="h-12 w-12 rounded-full bg-white/10 border border-white/10 text-white grid place-items-center hover:bg-white/15 transition"
+                        title="Más opciones"
+                    >
+                        <span class="material-symbols-outlined text-2xl">more_vert</span>
+                    </button>
+                    </div>
+                </div>
+                </div>
+            </aside>
+
+            <!-- Columna derecha: lista -->
+            <section>
+                <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white">Canciones</h2>
+                <button class="text-white/60 hover:text-white text-sm flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base">sort</span>
+                    Ordenar
+                </button>
+                </div>
+
+                <div id="playlist-tracks" class="space-y-2">
+                <!-- JS inyecta aquí -->
+                </div>
+            </section>
+            </div>
+        </div>
+        </section>
+
+       
+        </div>
+      </main>
+    </div>
+
+    <!-- 🔊 AUDIO HTML -->
+    <audio id="audio-element"></audio>
+
+    <!-- 🔊 Barra de reproducción Soundhub -->
+    <div
+      id="player-wrapper"
+      class="fixed bottom-0 left-0 right-0 flex justify-center pb-4 px-4 sm:px-6 lg:px-8 hidden z-30 pointer-events-none"
+    >
+      <div
+        class="w-full max-w-7xl mx-auto rounded-xl bg-background-dark/80 dark:bg-background-dark/50 backdrop-blur-lg border border-white/10 shadow-2xl shadow-primary/20 p-3 pointer-events-auto"
+      >
+        <div class="flex items-center justify-between gap-4">
+          <!-- Izquierda: info de la pista -->
+          <div class="flex items-center gap-4 w-full max-w-xs">
+            <div
+              id="player-cover"
+              class="bg-center bg-no-repeat aspect-square bg-cover rounded-md size-14 shrink-0"
+              data-alt="Portada del álbum"
+              style='background-image: url("https://via.placeholder.com/80x80?text=♪");'
+            ></div>
+            <div class="flex-1 overflow-hidden">
+              <p
+                id="player-title"
+                class="text-white text-base font-bold leading-tight truncate"
+              >
+                -
+              </p>
+              <p
+                id="player-artist"
+                class="text-white/60 text-sm font-normal leading-normal truncate"
+              >
+                -
+              </p>
+            </div>
+            <button
+              class="text-pink-accent hover:text-white transition-colors duration-200"
+              type="button"
+            >
+              <span class="material-symbols-outlined text-xl">favorite</span>
+            </button>
+          </div>
+
+          <!-- Centro: controles y barra de progreso -->
+          <div class="flex flex-col items-center gap-2 flex-grow max-w-2xl">
+            <div class="flex items-center gap-4">
+              <button
+                id="player-prev-btn"
+                class="text-white/60 hover:text-white transition-colors"
+                type="button"
+              >
+                <span class="material-symbols-outlined text-2xl">
+                  skip_previous
+                </span>
+              </button>
+              <button
+                id="player-play-btn"
+                class="flex shrink-0 items-center justify-center rounded-full size-10 bg-primary hover:bg-primary/80 transition-colors text-white"
+                type="button"
+              >
+                <span
+                  id="player-play-icon"
+                  class="material-symbols-outlined text-2xl"
+                >
+                  play_arrow
+                </span>
+              </button>
+              <button
+                id="player-next-btn"
+                class="text-white/60 hover:text-white transition-colors"
+                type="button"
+              >
+                <span class="material-symbols-outlined text-2xl">
+                  skip_next
+                </span>
+              </button>
+            </div>
+
+            <div class="w-full flex items-center gap-3 pt-1">
+              <p
+                id="player-current-time"
+                class="text-white/60 text-xs font-medium leading-normal tracking-[0.03em]"
+              >
+                0:00
+              </p>
+              <div
+                id="player-progress-bg"
+                class="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden cursor-pointer"
+              >
+                <div
+                  id="player-progress-fill"
+                  class="h-full w-0 bg-primary rounded-full transition-[width]"
+                ></div>
+              </div>
+              <p
+                id="player-duration"
+                class="text-white/60 text-xs font-medium leading-normal tracking-[0.03em]"
+              >
+                0:00
+              </p>
+            </div>
+          </div>
+
+          <!-- Derecha: volumen / extra -->
+          <div class="flex items-center gap-4 min-w-[140px] justify-end">
+            <div class="flex items-center gap-2 w-32">
+              <span class="material-symbols-outlined text-white/60 text-xl">
+                volume_up
+              </span>
+              <div
+                id="player-volume-bg"
+                class="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden cursor-pointer"
+              >
+                <div
+                  id="player-volume-fill"
+                  class="h-full w-full bg-primary rounded-full"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Router SPA -->
+    <script src="../js/utils/main.js"></script>
+
+    <script src="../js/auth/logout.js"></script>
+
+    <script src="../js/music/player.js"></script>
+    <script src="../js/music/playlistService.js"></script>
+    <script src="../js/music/playlists.js"></script>
+    <script src="../js/music/busqueda.js"></script>
+    <script src="../js/music/home-feed.js"></script>
+    <script src="../js/music/home-search.js"></script>
+
+    <script src="../js/ui/sidebar-bottom-follow-scroll.js"></script>
+
+
+    <!-- Modal para crear playlist -->
+    <div
+      data-playlist-modal
+      class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center"
+    >
+      <div class="bg-background-dark rounded-xl p-6 max-w-md w-full mx-4 border border-white/10">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="text-white text-xl font-bold">Crear nueva playlist</h3>
+          <button
+            data-close-modal
+            type="button"
+            class="text-stone-400 hover:text-white transition-colors"
+          >
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        <input
+          data-playlist-name-input
+          type="text"
+          placeholder="Nombre de la playlist"
+          class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white placeholder-stone-400 focus:outline-none focus:border-primary mb-4"
+        />
+
+        <p data-playlist-message class="text-sm min-h-[1.25rem] mb-4"></p>
+
+        <div class="flex gap-3">
+          <button
+            data-close-modal
+            type="button"
+            class="flex-1 px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            data-submit-playlist
+            type="button"
+            class="flex-1 px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/80 transition-colors font-semibold"
+          >
+            Crear
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

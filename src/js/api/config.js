@@ -1,0 +1,3 @@
+export const API_GATEWAY_URL = import.meta.env.PUBLIC_API_GATEWAY_URL;
+export const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL;
+export const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
