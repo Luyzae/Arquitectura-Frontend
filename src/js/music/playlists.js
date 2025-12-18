@@ -9,14 +9,11 @@ import {
 
 import { player } from "./player.js";
 
-// Estado “de UI” (no reproduce, solo para saber qué lista estás viendo)
 let currentPlaylistTracks = [];
 
 document.addEventListener("DOMContentLoaded", () => {
-  // ✅ Inicializa UNA vez el reproductor global
   player.init();
 
-  // UI playlists
   const createPlaylistBtn = document.querySelector("[data-create-playlist-btn]");
   const modal = document.querySelector("[data-playlist-modal]");
   const closeModalBtn = modal?.querySelector("[data-close-modal]");
@@ -86,7 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Cargar al entrar a biblioteca
   if (viewLibrary) {
     const observer = new MutationObserver(() => {
       if (!viewLibrary.classList.contains("hidden")) loadUserPlaylists();
@@ -94,7 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(viewLibrary, { attributes: true, attributeFilter: ["class"] });
   }
 
-  // Delegación de click para abrir playlist (1 sola vez)
   const playlistsContainer = document.querySelector("[data-playlists-container]");
   if (playlistsContainer && !playlistsContainer.dataset.bound) {
     playlistsContainer.dataset.bound = "true";
@@ -145,7 +140,6 @@ async function openPlaylist(playlistId, playlistName = "Playlist") {
     coverEl.style.backgroundPosition = "center";
   }
 
-  // ✅ Guardamos la lista actual para reproducirla con player.js
   currentPlaylistTracks = Array.isArray(tracks) ? tracks : [];
 
   if (currentPlaylistTracks.length === 0) {
@@ -190,7 +184,6 @@ async function openPlaylist(playlistId, playlistName = "Playlist") {
     })
     .join("");
 
-  // ✅ Bind: reproducir con la cola de esta playlist
   tracksEl.querySelectorAll(".play-playlist-track").forEach((btn) => {
     btn.addEventListener("click", () => {
       const index = Number(btn.dataset.trackIndex);
