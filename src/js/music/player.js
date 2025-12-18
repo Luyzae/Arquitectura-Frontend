@@ -70,7 +70,6 @@ function setVolumeFromPercent(percent) {
   audioEl.volume = norm / 100;
 }
 
-// Normaliza campos (sirve para búsqueda y playlist)
 function getVideoId(track) {
   return track.videoId || track.ytmusic_id || null;
 }
