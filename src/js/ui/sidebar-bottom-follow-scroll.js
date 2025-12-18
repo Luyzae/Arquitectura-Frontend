@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const SPEED = 1;
 
-  // fuerza capa de composición (reduce ghosting)
   bottom.style.willChange = "transform";
   bottom.style.transform = "translate3d(0,0,0)";
 
