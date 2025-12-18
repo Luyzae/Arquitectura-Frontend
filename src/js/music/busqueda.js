@@ -19,7 +19,6 @@ let currentSongs = [];
 let currentIndex = -1;
 
 document.addEventListener("DOMContentLoaded", () => {
-  // ✅ Inicializa UNA vez el reproductor global
   player.init();
 
   const form = document.getElementById("search-form");
@@ -200,11 +199,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const playBtn = card.querySelector(".play-track-btn");
       playBtn.addEventListener("click", () => {
-        // ✅ tu token check (si quieres mantenerlo)
         if (!ensureLoggedInForPlaybackSync()) return;
 
         currentIndex = index;
-        // ✅ UN SOLO reproductor global
         player.setQueueAndPlay(currentSongs, index);
       });
 
